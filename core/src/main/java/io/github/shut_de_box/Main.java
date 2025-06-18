@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.github.shut_de_box.Objects.AbstractButton;
 import io.github.shut_de_box.Objects.Box;
+import io.github.shut_de_box.Objects.Die;
 import io.github.shut_de_box.Objects.ThrowDiceButton;
 import io.github.shut_de_box.Objects.Tile;
 
@@ -48,12 +49,12 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         backgroundTexture = new Texture("achtergrond.png");
 
+        box = new Box();
+
         buttons = new ArrayList<>();
         ThrowDiceButton throwDiceButton = new ThrowDiceButton("Dice button", "buttons/throw_dice_button/normal.png", 
-            "buttons/throw_dice_button/pressed.png", 800, 240, 102, 63);
+            "buttons/throw_dice_button/pressed.png", 800, 240, 102, 63, box);
         buttons.add(throwDiceButton);
-
-        box = new Box();
         
         viewport = new FitViewport(1028f, 480f);
         clickPos = new Vector2();
@@ -85,17 +86,18 @@ public class Main extends ApplicationAdapter {
             clickPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(clickPos);
 
-            for (Tile tile : box.getTiles()) {
+            for (int i = 0; i < box.getTiles().size(); i++) {
+                Tile tile = box.getTiles().get(i);
                 if (tile.getCurrentSprite().getBoundingRectangle().contains(clickPos)){
-                    tile.flip();
+                    box.flipTile(i);
                     System.out.println("tile was clicked");
                 }
             }
 
             for (AbstractButton button : buttons) {
                 if (button.getCurrentSprite().getBoundingRectangle().contains(clickPos)) {
-                    System.out.println("button was pressed");
-                    button.press();
+                        System.out.println("button was pressed");
+                        button.press();
                 }
             }
         }
@@ -130,7 +132,10 @@ public class Main extends ApplicationAdapter {
             sprite.draw(batch);
         }
 
-        // tiles.get(0).getSprite().draw(batch);
+        Die[] dice = box.getDice();
+        dice[0].getCurrentSide().draw(batch);
+        dice[1].getCurrentSide().draw(batch);
+
         batch.end();
     }
 }

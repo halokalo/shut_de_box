@@ -64,6 +64,9 @@ public class Tile {
         return this.isClosed;
     }
 
+    public boolean isLocked(){
+        return this.isLocked;
+    }
 
     /**
      * returns the tile's sprite
