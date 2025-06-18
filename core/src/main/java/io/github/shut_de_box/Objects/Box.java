@@ -1,4 +1,4 @@
-package io.github.shut_de_box;
+package io.github.shut_de_box.Objects;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ public class Box {
     public Box() {
         List<String> tileFiles = List.of("tiles/tile_1.png","tiles/tile_2.png","tiles/tile_3.png","tiles/tile_4.png","tiles/tile_5.png","tiles/tile_6.png","tiles/tile_7.png","tiles/tile_8.png","tiles/tile_9.png");
         tiles = new ArrayList<>();
-        int initialTileLoc = 120;
         for (int i = 0; i < 9; i++) {
             tiles.add(new Tile(tileFiles.get(i), 120 + 60 * i));
         }

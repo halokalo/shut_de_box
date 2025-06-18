@@ -10,9 +10,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import io.github.shut_de_box.Objects.AbstractButton;
+import io.github.shut_de_box.Objects.Box;
+import io.github.shut_de_box.Objects.ThrowDiceButton;
+import io.github.shut_de_box.Objects.Tile;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -34,10 +41,17 @@ public class Main extends ApplicationAdapter {
 
     private Vector2 clickPos;
 
+    private ArrayList<AbstractButton> buttons;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
         backgroundTexture = new Texture("achtergrond.png");
+
+        buttons = new ArrayList<>();
+        ThrowDiceButton throwDiceButton = new ThrowDiceButton("Dice button", "buttons/throw_dice_button/normal.png", 
+            "buttons/throw_dice_button/pressed.png", 800, 240, 102, 63);
+        buttons.add(throwDiceButton);
 
         box = new Box();
         
@@ -66,7 +80,7 @@ public class Main extends ApplicationAdapter {
     private long lastClick = System.currentTimeMillis();
 
     private void input(){
-        if (Gdx.input.isTouched() && System.currentTimeMillis() - lastClick > 200) {
+        if (Gdx.input.isTouched() && System.currentTimeMillis() - lastClick > 50) {
             lastClick = System.currentTimeMillis();
             clickPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(clickPos);
@@ -77,10 +91,22 @@ public class Main extends ApplicationAdapter {
                     System.out.println("tile was clicked");
                 }
             }
+
+            for (AbstractButton button : buttons) {
+                if (button.getCurrentSprite().getBoundingRectangle().contains(clickPos)) {
+                    System.out.println("button was pressed");
+                    button.press();
+                }
+            }
         }
     }
 
-    private void logic(){}
+    private void logic(){
+        float delta = Gdx.graphics.getDeltaTime();
+        for (AbstractButton button : buttons) {
+            button.update(delta);
+        }
+    }
 
     private void draw(){
         ArrayList<Tile> tiles = box.getTiles();
@@ -98,6 +124,12 @@ public class Main extends ApplicationAdapter {
             Sprite sprite = curTile.getCurrentSprite();
             sprite.draw(batch);
         }
+
+        for (AbstractButton button : buttons) {
+            Sprite sprite = button.getCurrentSprite();
+            sprite.draw(batch);
+        }
+
         // tiles.get(0).getSprite().draw(batch);
         batch.end();
     }
