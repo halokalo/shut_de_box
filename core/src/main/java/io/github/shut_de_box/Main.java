@@ -96,8 +96,8 @@ public class Main extends ApplicationAdapter {
 
             for (AbstractButton button : buttons) {
                 if (button.getCurrentSprite().getBoundingRectangle().contains(clickPos)) {
-                        System.out.println("button was pressed");
-                        button.press();
+                    System.out.println("button was pressed");
+                    button.press();
                 }
             }
         }
