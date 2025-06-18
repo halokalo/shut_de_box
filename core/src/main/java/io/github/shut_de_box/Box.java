@@ -1,7 +1,9 @@
 package io.github.shut_de_box;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Box {
     private ArrayList<Tile> tiles;
@@ -9,11 +11,13 @@ public class Box {
     private int currentlyThrown;
 
     public Box() {
+        List<String> tileFiles = List.of("tiles/tile_1.png","tiles/tile_2.png","tiles/tile_3.png","tiles/tile_4.png","tiles/tile_5.png","tiles/tile_6.png","tiles/tile_7.png","tiles/tile_8.png","tiles/tile_9.png");
         tiles = new ArrayList<>();
-        Tile tile1 = new Tile("tiles/tile_1.png", 120);
-        tiles.add(tile1);
-        // TODO create all tiles
-        // TODO create all dice
+        int initialTileLoc = 120;
+        for (int i = 0; i < 9; i++) {
+            tiles.add(new Tile(tileFiles.get(i), 120 + 60 * i));
+        }
+        // TODO create dice
     }
 
     public ArrayList<Tile> getTiles() {

@@ -2,26 +2,14 @@ package io.github.shut_de_box;
 
 import org.w3c.dom.Text;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
+
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Tile {
-    private boolean isFlipped;
+    private boolean isClosed;
+    private boolean isLocked;
+    private Sprite closedSprite = new Sprite(new Texture("closed_tile.png"));
     private Texture texture;
     private Sprite sprite;
 
@@ -30,27 +18,46 @@ public class Tile {
      * @param filepath name of the png file 
      * @param x x-position of the sprite
      */
-    public Tile(String filepath, int x){
+    public Tile(String filepath, int x){        
         texture = new Texture(filepath);
         sprite = new Sprite(texture);
         sprite.setSize(50, 80);
         sprite.setPosition(x,370);
-        isFlipped = false;
+
+        closedSprite.setSize(50, 80);
+        closedSprite.setPosition(x, 290);
+
+        isClosed = false;
+        isLocked = false;
     }
 
     /**
      * Flips the tile from down to up or vise-versa
      */
     public void flip(){
-        isFlipped = !isFlipped;
+        if (!isLocked) {
+            if (!isClosed) {
+                this.setSprite(closedSprite);
+            } else {
+                this.setSprite(sprite);
+            }
+            isClosed = !isClosed;
+        }
+    }
+
+    /**
+     * Locks a tile to keep it from being flipped again
+     */
+    public void lock(){
+        isLocked = true;
     }
 
     /**
      * returns whether the tile is flipped
      * @return boolean
      */
-    public boolean isFlipped() {
-        return this.isFlipped;
+    public boolean isClosed() {
+        return this.isClosed;
     }
 
     /**
@@ -79,14 +86,14 @@ public class Tile {
 
     @Override
     public String toString() {
-        return "Tile [isFlipped=" + isFlipped + ", texture=" + texture + ", sprite=" + sprite + "]";
+        return "Tile [isFlipped=" + isClosed + ", texture=" + texture + ", sprite=" + sprite + "]";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (isFlipped ? 1231 : 1237);
+        result = prime * result + (isClosed ? 1231 : 1237);
         result = prime * result + ((texture == null) ? 0 : texture.hashCode());
         result = prime * result + ((sprite == null) ? 0 : sprite.hashCode());
         return result;
@@ -101,7 +108,7 @@ public class Tile {
         if (getClass() != obj.getClass())
             return false;
         Tile other = (Tile) obj;
-        if (isFlipped != other.isFlipped)
+        if (isClosed != other.isClosed)
             return false;
         if (texture == null) {
             if (other.texture != null)

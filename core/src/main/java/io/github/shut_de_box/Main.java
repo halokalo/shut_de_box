@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -31,6 +32,8 @@ public class Main extends ApplicationAdapter {
 
     private Viewport viewport;
 
+    private Vector2 clickPos;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -39,6 +42,7 @@ public class Main extends ApplicationAdapter {
         box = new Box();
         
         viewport = new FitViewport(1028f, 480f);
+        clickPos = new Vector2();
     }
 
     @Override
@@ -61,7 +65,16 @@ public class Main extends ApplicationAdapter {
 
 
     private void input(){
-        // int tileIndex = Gdx.input.K
+        if (Gdx.input.isTouched()) {
+            clickPos.set(Gdx.input.getX(), Gdx.input.getY());
+            viewport.unproject(clickPos);
+
+            for (Tile tile : box.getTiles()) {
+                if (tile.getSprite().getBoundingRectangle().contains(clickPos)){
+                    tile.flip();
+                }
+            }
+        }
     }
 
     private void logic(){}
@@ -78,7 +91,11 @@ public class Main extends ApplicationAdapter {
 
         batch.begin();
         batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
-        tiles.get(0).getSprite().draw(batch);
+        for (Tile curTile : box.getTiles()) {
+            Sprite sprite = curTile.getSprite();
+            sprite.draw(batch);
+        }
+        // tiles.get(0).getSprite().draw(batch);
         batch.end();
     }
 }
