@@ -9,9 +9,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public class Tile {
     private boolean isClosed;
     private boolean isLocked;
+    private Sprite openedSprite;
     private Sprite closedSprite = new Sprite(new Texture("closed_tile.png"));
+    private Sprite currentSprite;
     private Texture texture;
-    private Sprite sprite;
 
     /**
      * Creates a new Tile with a file name and position.
@@ -20,10 +21,12 @@ public class Tile {
      */
     public Tile(String filepath, int x){        
         texture = new Texture(filepath);
-        sprite = new Sprite(texture);
-        sprite.setSize(50, 80);
-        sprite.setPosition(x,370);
-
+        openedSprite = new Sprite(texture);
+        openedSprite.setSize(50, 80);
+        openedSprite.setPosition(x,370);
+        
+        currentSprite = openedSprite;
+        
         closedSprite.setSize(50, 80);
         closedSprite.setPosition(x, 290);
 
@@ -37,9 +40,11 @@ public class Tile {
     public void flip(){
         if (!isLocked) {
             if (!isClosed) {
-                this.setSprite(closedSprite);
+                System.out.println("Opened tile was clicked");
+                this.setCurrentSprite(closedSprite);
             } else {
-                this.setSprite(sprite);
+                System.out.println("Closed tile was clicked");
+                this.setCurrentSprite(openedSprite);
             }
             isClosed = !isClosed;
         }
@@ -72,21 +77,21 @@ public class Tile {
      * returns the tile's sprite
      * @return Sprite
      */
-    public Sprite getSprite() {
-        return this.sprite;
+    public Sprite getCurrentSprite() {
+        return this.currentSprite;
     }
 
     /**
      * sets the sprite of a tile
      * @param sprite
      */
-    public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
+    public void setCurrentSprite(Sprite sprite) {
+        this.currentSprite = sprite;
     }
 
     @Override
     public String toString() {
-        return "Tile [isFlipped=" + isClosed + ", texture=" + texture + ", sprite=" + sprite + "]";
+        return "Tile [isFlipped=" + isClosed + ", texture=" + texture + ", sprite=" + currentSprite + "]";
     }
 
     @Override
@@ -95,7 +100,7 @@ public class Tile {
         int result = 1;
         result = prime * result + (isClosed ? 1231 : 1237);
         result = prime * result + ((texture == null) ? 0 : texture.hashCode());
-        result = prime * result + ((sprite == null) ? 0 : sprite.hashCode());
+        result = prime * result + ((currentSprite == null) ? 0 : currentSprite.hashCode());
         return result;
     }
 
@@ -115,10 +120,10 @@ public class Tile {
                 return false;
         } else if (!texture.equals(other.texture))
             return false;
-        if (sprite == null) {
-            if (other.sprite != null)
+        if (currentSprite == null) {
+            if (other.currentSprite != null)
                 return false;
-        } else if (!sprite.equals(other.sprite))
+        } else if (!currentSprite.equals(other.currentSprite))
             return false;
         return true;
     }

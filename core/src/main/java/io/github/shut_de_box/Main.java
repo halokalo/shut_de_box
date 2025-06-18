@@ -21,7 +21,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-
+import java.time.*;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -63,15 +63,18 @@ public class Main extends ApplicationAdapter {
         viewport.update(width, height, true); // true centers the camera
     }
 
+    private long lastClick = System.currentTimeMillis();
 
     private void input(){
-        if (Gdx.input.isTouched()) {
+        if (Gdx.input.isTouched() && System.currentTimeMillis() - lastClick > 200) {
+            lastClick = System.currentTimeMillis();
             clickPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(clickPos);
 
             for (Tile tile : box.getTiles()) {
-                if (tile.getSprite().getBoundingRectangle().contains(clickPos)){
+                if (tile.getCurrentSprite().getBoundingRectangle().contains(clickPos)){
                     tile.flip();
+                    System.out.println("tile was clicked");
                 }
             }
         }
@@ -91,8 +94,8 @@ public class Main extends ApplicationAdapter {
 
         batch.begin();
         batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
-        for (Tile curTile : box.getTiles()) {
-            Sprite sprite = curTile.getSprite();
+        for (Tile curTile : tiles) {
+            Sprite sprite = curTile.getCurrentSprite();
             sprite.draw(batch);
         }
         // tiles.get(0).getSprite().draw(batch);
