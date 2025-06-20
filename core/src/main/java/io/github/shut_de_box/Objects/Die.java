@@ -10,7 +10,7 @@ public class Die {
     private int value = 3;
     private List<Sprite> sides;
 
-    public Die(int xPos, int yPos) {
+    public Die(float xPos, float yPos) {
         List<String> sideFileNames = List.of("die/side_1.png","die/side_2.png","die/side_3.png"
             ,"die/side_4.png","die/side_5.png","die/side_6.png");
         

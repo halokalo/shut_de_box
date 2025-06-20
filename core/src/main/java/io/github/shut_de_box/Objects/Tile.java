@@ -16,18 +16,18 @@ public class Tile {
     /**
      * Creates a new Tile with a file name and position.
      * @param filepath name of the png file 
-     * @param x x-position of the sprite
+     * @param xPos x-position of the sprite
      */
-    public Tile(String filepath, int x){        
+    public Tile(String filepath, float xPos){        
         Texture texture = new Texture(filepath);
         openedSprite = new Sprite(texture);
-        openedSprite.setSize(50, 80);
-        openedSprite.setPosition(x,370);
+        openedSprite.setSize(50f, 80f);
+        openedSprite.setPosition(xPos,370f);
         
         currentSprite = openedSprite;
 
-        closedSprite.setSize(50, 80);
-        closedSprite.setPosition(x, 290);
+        closedSprite.setSize(50f, 80f);
+        closedSprite.setPosition(xPos, 290f);
 
         isClosed = false;
         isLocked = false;

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import io.github.shut_de_box.util.MathUtil;
+import io.github.shut_de_box.util.Util;
 
 public class Box {
     private ArrayList<Tile> tiles;
@@ -18,11 +18,11 @@ public class Box {
         List<String> tileFiles = List.of("tiles/tile_1.png","tiles/tile_2.png","tiles/tile_3.png","tiles/tile_4.png","tiles/tile_5.png","tiles/tile_6.png","tiles/tile_7.png","tiles/tile_8.png","tiles/tile_9.png");
         tiles = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
-            tiles.add(new Tile(tileFiles.get(i), 120 + 60 * i));
+            tiles.add(new Tile(tileFiles.get(i), (float)(120 + 60 * i)));
         }
         dice = new Die[2];
-        dice[0] = new Die(250, 100);
-        dice[1] = new Die(350, 100);
+        dice[0] = new Die(250f, 100f);
+        dice[1] = new Die(350f, 100f);
     }
 
     public boolean rollDice(){
@@ -50,7 +50,7 @@ public class Box {
             nonLockedTileValuesArray[i] = nonLockedTileValues.get(i);
         }
 
-        boolean stillPossible = MathUtil.isSubsetSum(nonLockedTileValuesArray, nonLockedTileValues.size(), currentlyThrown);
+        boolean stillPossible = Util.isSubsetSum1Or2(nonLockedTileValuesArray, currentlyThrown);
         if (!stillPossible) {
             System.out.println("Klaar");
         }
