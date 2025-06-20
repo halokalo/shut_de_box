@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Die {
     private int value = 3;
@@ -38,6 +39,7 @@ public class Die {
         return sides.get(value - 1);
     }
 
-
-    
+    public void draw(SpriteBatch batch) {
+        getCurrentSide().draw(batch);
+    } 
 }

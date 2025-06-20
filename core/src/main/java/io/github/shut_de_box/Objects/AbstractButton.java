@@ -2,6 +2,7 @@ package io.github.shut_de_box.Objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class AbstractButton {
     protected String name;
@@ -10,7 +11,6 @@ public abstract class AbstractButton {
     protected Box box;
 
     protected boolean isPressed;
-    protected float pressedTime = 0f;
     protected static final float PRESSED_DURATION = 0.05f; // 0.15f = 150 ms
 
     public AbstractButton(String name, String normalTextureFile, String pressedTextureFile, int xPos, int yPos, int width, int height, Box box) {
@@ -32,25 +32,25 @@ public abstract class AbstractButton {
 
     public void onPress() {
         isPressed = true;
-        System.out.println("on press now " + isPressed + " for " + name);
     }
 
     /**
      * Performs the action that should happen upon press of button
      */
     public void press() {
-        pressedTime = PRESSED_DURATION;
+        setToPressed();
         System.out.println(name + " was clicked");
     }
 
     public void onRelease() {
-        System.out.println("inside on release in " + name + " with ispressed: " + isPressed);
         if (isPressed) {
             press();
-            System.out.println("pressed function executed");
         }
         isPressed = false;
-        System.out.println("on press now false");
+    }
+
+    public void draw(SpriteBatch batch) {
+        getCurrentSprite().draw(batch);
     }
 
     public void setToNormal() {
@@ -103,14 +103,6 @@ public abstract class AbstractButton {
 
     public void setPressed(boolean isPressed) {
         this.isPressed = isPressed;
-    }
-
-    public float getPressedTime() {
-        return pressedTime;
-    }
-
-    public void setPressedTime(float pressedTime) {
-        this.pressedTime = pressedTime;
     }
 
     public static float getPressedDuration() {

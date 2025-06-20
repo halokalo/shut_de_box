@@ -1,6 +1,5 @@
 package io.github.shut_de_box.Objects;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,9 +7,9 @@ import io.github.shut_de_box.util.Util;
 
 public class Box {
     private ArrayList<Tile> tiles;
-    private Die[] dice;
+    private ArrayList<Die> dice;
     private int currentlyThrown = 0;
-
+    private boolean isDone = false;
     private boolean canRollDice = true;
     private ArrayList<Integer> flippedTileIndices = new ArrayList<>();
 
@@ -20,27 +19,30 @@ public class Box {
         for (int i = 0; i < 9; i++) {
             tiles.add(new Tile(tileFiles.get(i), (float)(120 + 60 * i)));
         }
-        dice = new Die[2];
-        dice[0] = new Die(250f, 100f);
-        dice[1] = new Die(350f, 100f);
+        dice = new ArrayList<>();
+        dice.add(new Die(250f, 100f));
+        dice.add(new Die(350f, 100f));
     }
 
     public boolean rollDice(){
-        System.out.println("Flipped value: " + getValueFlipped());
         if (!canRollDice) return false;
         else {
             lockFlipped();
             flippedTileIndices.clear();
-            currentlyThrown = dice[0].roll() + dice[1].roll(); // roll dice
-            checkForEndOfGame();
+            currentlyThrown = 0;
+            for (Die die : dice) {
+                currentlyThrown += die.roll();
+            }
+            checkGameStatus();
             canRollDice = false;
             System.out.println("Rolled: " + currentlyThrown);
             return true;
         }
     }
 
-    public void checkForEndOfGame(){
+    public void checkGameStatus(){
         ArrayList<Integer> nonLockedTileValues = new ArrayList<>();
+        int remainingValue = getRemainingValue();
         for (int i = 0; i < 9; i++) {
            if (tiles.get(i).isLocked()) continue;
             nonLockedTileValues.add(i + 1);
@@ -52,7 +54,12 @@ public class Box {
 
         boolean stillPossible = Util.isSubsetSum1Or2(nonLockedTileValuesArray, currentlyThrown);
         if (!stillPossible) {
+            isDone = true;
             System.out.println("Klaar");
+            if (remainingValue == 0) {
+                System.out.println("Gewonnen");
+            }
+            for (Tile tile : tiles) {tile.lock();}
         }
     }
 
@@ -73,6 +80,7 @@ public class Box {
         tile.flip();
         flippedTileIndices.add(index);
         updateCanRollDice();
+        checkGameStatus();
         return true;
     }
 
@@ -95,6 +103,18 @@ public class Box {
         return canRollDice;
     }
 
+    public int getRemainingValue() {
+        int res = 0; 
+        for (int i = 0; i < 9; i++) {
+            if (!tiles.get(i).isClosed()) {
+                res += i + 1;
+            }
+        }
+        return res;
+    }
+
+    public boolean isDone() {return isDone;}
+
     public ArrayList<Integer> getFlippedIndices(){
         return flippedTileIndices;
     }
@@ -107,48 +127,15 @@ public class Box {
         return tiles;
     }
 
-    public Die[] getDice() {
-        return dice;
-    }    
-
-    @Override
-    public String toString() {
-        return "Box [tiles=" + tiles + ", dice=" + Arrays.toString(dice) + "]";
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((tiles == null) ? 0 : tiles.hashCode());
-        result = prime * result + Arrays.hashCode(dice);
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Box other = (Box) obj;
-        if (tiles == null) {
-            if (other.tiles != null)
-                return false;
-        } else if (!tiles.equals(other.tiles))
-            return false;
-        if (!Arrays.equals(dice, other.dice))
-            return false;
-        return true;
-    }
-
     public void setTiles(ArrayList<Tile> tiles) {
         this.tiles = tiles;
     }
 
-    public void setDice(Die[] dice) {
+    public ArrayList<Die> getDice() {
+        return dice;
+    }
+
+    public void setDice(ArrayList<Die> dice) {
         this.dice = dice;
     }
 

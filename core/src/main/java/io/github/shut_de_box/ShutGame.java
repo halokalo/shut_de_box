@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,12 +16,13 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.github.shut_de_box.Objects.*;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class ShutGame extends ApplicationAdapter implements InputProcessor{
     private SpriteBatch batch;
-    
+    BitmapFont font;
+
     private Music backgroundSound;
     private Texture backgroundTexture;
     private Box box;
@@ -34,19 +34,17 @@ public class ShutGame extends ApplicationAdapter implements InputProcessor{
     private ArrayList<AbstractButton> buttons = new ArrayList<>();
     private ArrayList<Popup> popups = new ArrayList<>();
 
-    
-
     @Override
     public void create() {
+        font = new BitmapFont();
         Gdx.input.setInputProcessor(this);
         backgroundSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/temple_os_hymn.mp3"));
         backgroundSound.setVolume(0.5f);
-        backgroundSound.play();
+        // backgroundSound.play();
         batch = new SpriteBatch();
         backgroundTexture = new Texture("achtergrond.png");
 
         box = new Box();
-
         ThrowDiceButton throwDiceButton = new ThrowDiceButton("Dice button", "buttons/throw_dice_button/normal.png", 
             "buttons/throw_dice_button/pressed.png", 800, 240, 102, 63, box);
         RestartButton restartButton = new RestartButton("Restart button", "buttons/restart_button/normal.png", 
@@ -72,19 +70,18 @@ public class ShutGame extends ApplicationAdapter implements InputProcessor{
 
         batch.begin();
         batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
-        for (Tile curTile : tiles) {
-            Sprite sprite = curTile.getCurrentSprite();
-            sprite.draw(batch);
-        }
+        
+        // Draw all items
+        for (Tile tile : tiles) { tile.draw(batch);}
+        for (AbstractButton button : buttons) { button.draw(batch);}
+        for (Die die : box.getDice()) { die.draw(batch);}
+        for (Popup popup : popups) { popup.draw(batch, font);}
+        // Draw all items
 
-        for (AbstractButton button : buttons) {
-            Sprite sprite = button.getCurrentSprite();
-            sprite.draw(batch);
+        int score = box.getRemainingValue();
+        if (box.isDone()) {
+            handleFinishedGame(score);
         }
-
-        Die[] dice = box.getDice();
-        dice[0].getCurrentSide().draw(batch);
-        dice[1].getCurrentSide().draw(batch);
 
         batch.end();
     }
@@ -109,6 +106,20 @@ public class ShutGame extends ApplicationAdapter implements InputProcessor{
             button.setBox(box);
         }
     }
+
+    public void handleFinishedGame(int score) {
+        if (score == 0) {
+                font.draw(batch, "Gewonnen", 500, 200);
+            } else if (score == 37) {
+                font.draw(batch, "Staatslegende juttutu juttutu " + score, 500, 200);
+            } else if (score < 10){
+                font.draw(batch, "niet super slecht: " + score, 500, 200);
+            } else if (score < 20) {
+                font.draw(batch, "lol slecht: " + score, 500, 200);
+            } else {
+                font.draw(batch, "loser: " + score, 500, 200);
+            }
+    }
     
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -123,7 +134,6 @@ public class ShutGame extends ApplicationAdapter implements InputProcessor{
                 Tile tile = box.getTiles().get(i);
                 if (tile.getCurrentSprite().getBoundingRectangle().contains(clickPos)){
                     box.flipTile(i);
-                    System.out.println("tile was clicked");
                 }
             }
         return true;

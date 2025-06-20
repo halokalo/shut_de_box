@@ -1,10 +1,8 @@
 package io.github.shut_de_box.Objects;
 
-import org.w3c.dom.Text;
-
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Tile {
     private boolean isClosed;
@@ -39,14 +37,16 @@ public class Tile {
     public void flip(){
         if (!isLocked) {
             if (!isClosed) {
-                System.out.println("Opened tile was clicked");
                 this.setCurrentSprite(closedSprite);
             } else {
-                System.out.println("Closed tile was clicked");
                 this.setCurrentSprite(openedSprite);
             }
             isClosed = !isClosed;
         }
+    }
+
+    public void draw(SpriteBatch batch) {
+        getCurrentSprite().draw(batch);
     }
 
     /**
@@ -82,6 +82,10 @@ public class Tile {
      */
     public void setCurrentSprite(Sprite sprite) {
         this.currentSprite = sprite;
+    }
+
+    public void close() {
+        isClosed = true;
     }
 
     @Override

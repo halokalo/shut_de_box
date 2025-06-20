@@ -1,7 +1,5 @@
 package io.github.shut_de_box.Objects;
 
-import io.github.shut_de_box.ShutGame;
-
 public class RestartButton extends AbstractButton {
     private Runnable resetRunnable;
 
@@ -14,7 +12,6 @@ public class RestartButton extends AbstractButton {
     @Override
     public void press(){
         setToPressed();
-        pressedTime = PRESSED_DURATION;
         if (resetRunnable != null) resetRunnable.run();
     }
 }

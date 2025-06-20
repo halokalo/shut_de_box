@@ -19,7 +19,6 @@ public class ThrowDiceButton extends AbstractButton{
         Util.doWithChance(0.05f, aaaahSound::play);
 
         setToPressed();
-        pressedTime = PRESSED_DURATION;
         box.rollDice();
     }
     
